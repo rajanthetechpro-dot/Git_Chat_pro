@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense List - Expense Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8d5ff 0%, #d1b3ff 50%, #c9a6ff 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(147, 51, 234, 0.15);
+            padding: 40px;
+            border: 1px solid rgba(147, 51, 234, 0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5d5ff;
+        }
+
+        .page-title {
+            color: #7c3aed;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-button {
+            background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .nav-button:hover {
+            background: linear-gradient(135deg, #9333ea 0%, #6d28d9 100%);
+            transform: translateY(-2px);
+        }
+
+        .filters {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e5d5ff;
+            margin-bottom: 30px;
+        }
+
+        .filters-title {
+            color: #7c3aed;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 20px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-label {
+            display: block;
+            color: #7c3aed;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .filter-input, .filter-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5d5ff;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            color: #4c1d95;
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+        }
+
+        .filter-button {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .filter-button:hover {
+            background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+            transform: translateY(-2px);
+        }
+
+        .expenses-section {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e5d5ff;
+        }
+
+        .section-title {
+            color: #7c3aed;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e5d5ff;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .expense-item:hover {
+            background: rgba(168, 85, 247, 0.05);
+            transform: translateX(5px);
+        }
+
+        .expense-item:last-child {
+            border-bottom: none;
+        }
+
+        .expense-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .expense-category {
+            font-size: 32px;
+            width: 50px;
+            text-align: center;
+        }
+
+        .expense-details {
+            flex: 1;
+        }
+
+        .expense-title {
+            color: #4c1d95;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .expense-meta {
+            color: #a855f7;
+            font-size: 14px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .expense-amount {
+            color: #7c3aed;
+            font-size: 20px;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .page-link {
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #7c3aed;
+            border: 2px solid #e5d5ff;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .page-link:hover, .page-link.active {
+            background: #7c3aed;
+            color: white;
+            border-color: #7c3aed;
+        }
+
+        .page-link.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .no-expenses {
+            text-align: center;
+            padding: 60px 20px;
+            color: #a855f7;
+        }
+
+        .no-expenses-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .no-expenses-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #7c3aed;
+        }
+
+        .no-expenses-text {
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #e5d5ff;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: #a855f7;
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            color: #7c3aed;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #a855f7;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .nav-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .filter-row {
+                flex-direction: column;
+            }
+            
+            .expense-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .expense-info {
+                width: 100%;
+            }
+            
+            .expense-amount {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="page-title">All Expenses</h1>
+            <div class="nav-buttons">
+                <a href="{% url 'dashboard' %}" class="nav-button">🏠 Dashboard</a>
+                <a href="{% url 'add_expense' %}" class="nav-button">➕ Add Expense</a>
+                <a href="{% url 'analytics' %}" class="nav-button">📊 Analytics</a>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <div class="filters-title">🔍 Filter Expenses</div>
+            <form method="get" class="filter-row">
+                <div class="filter-group">
+                    <label class="filter-label">Category</label>
+                    <select name="category" class="filter-select">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
+                                {{ category.icon }} {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Month</label>
+                    <input type="month" name="month" class="filter-input" value="{{ selected_month }}">
+                </div>
+                
+                <div class="filter-group">
+                    <button type="submit" class="filter-button">Apply Filters</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Stats Summary -->
+        {% if expenses %}
+        <div class="stats-summary">
+            <div class="stat-card">
+                <div class="stat-value">{{ expenses|length }}</div>
+                <div class="stat-label">Total Expenses</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">₹{{ total_amount|floatformat:2 }}</div>
+                <div class="stat-label">Total Amount</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">
+                    {% if expenses %}
+                        {% with last_expense=expenses|last %}
+                            {{ expenses.0.date|date:"M" }} - {{ last_expense.date|date:"M" }}
+                        {% endwith %}
+                    {% endif %}
+                </div>
+                <div class="stat-label">Date Range</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Expenses List -->
+        <div class="expenses-section">
+            <div class="section-title">
+                <span>📋 Expense Records</span>
+                <span class="nav-button" style="font-size: 12px; padding: 5px 10px;">
+                    {% if expenses %}{{ expenses|length }} records{% else %}0 records{% endif %}
+                </span>
+            </div>
+
+            {% if expenses %}
+                {% for expense in expenses %}
+                    <div class="expense-item">
+                        <div class="expense-info">
+                            <div class="expense-category">{{ expense.category.icon }}</div>
+                            <div class="expense-details">
+                                <div class="expense-title">{{ expense.title }}</div>
+                                <div class="expense-meta">
+                                    <span>{{ expense.category.name }}</span>
+                                    <span>{{ expense.date|date:"M d, Y" }}</span>
+                                    {% if expense.description %}
+                                        <span>{{ expense.description|truncatechars:50 }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="expense-amount">{{ expense.formatted_amount }}</div>
+                    </div>
+                {% endfor %}
+
+                <!-- Pagination -->
+                {% if expenses.has_other_pages %}
+                    <div class="pagination">
+                        {% if expenses.has_previous %}
+                            <a href="?page=1{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_month %}&month={{ selected_month }}{% endif %}" class="page-link">First</a>
+                            <a href="?page={{ expenses.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_month %}&month={{ selected_month }}{% endif %}" class="page-link">Previous</a>
+                        {% endif %}
+
+                        {% for num in expenses.paginator.page_range %}
+                            {% if expenses.number == num %}
+                                <span class="page-link active">{{ num }}</span>
+                            {% elif num > expenses.number|add:'-3' and num < expenses.number|add:'3' %}
+                                <a href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_month %}&month={{ selected_month }}{% endif %}" class="page-link">{{ num }}</a>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if expenses.has_next %}
+                            <a href="?page={{ expenses.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_month %}&month={{ selected_month }}{% endif %}" class="page-link">Next</a>
+                            <a href="?page={{ expenses.paginator.num_pages }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_month %}&month={{ selected_month }}{% endif %}" class="page-link">Last</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="no-expenses">
+                    <div class="no-expenses-icon">📝</div>
+                    <div class="no-expenses-title">No Expenses Found</div>
+                    <div class="no-expenses-text">
+                        {% if selected_category or selected_month %}
+                            No expenses match your current filters. Try adjusting your search criteria.
+                        {% else %}
+                            You haven't recorded any expenses yet. Start tracking your spending today!
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'add_expense' %}" class="nav-button">➕ Add Your First Expense</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

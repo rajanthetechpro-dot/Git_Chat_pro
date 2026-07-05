@@ -3,7 +3,8 @@
 
 # Application Caches & Cloned Repositories
 .cache/
-.temp_repos/
+temp_repos/
+
 
 # Python caching
 __pycache__/
