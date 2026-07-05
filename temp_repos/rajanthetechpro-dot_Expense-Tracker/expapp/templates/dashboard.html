@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Expense Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8d5ff 0%, #d1b3ff 50%, #c9a6ff 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(147, 51, 234, 0.15);
+            padding: 40px;
+            border: 1px solid rgba(147, 51, 234, 0.1);
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5d5ff;
+        }
+
+        .welcome-message {
+            color: #7c3aed;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-button {
+            background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .nav-button:hover {
+            background: linear-gradient(135deg, #9333ea 0%, #6d28d9 100%);
+            transform: translateY(-2px);
+        }
+
+        .logout-button {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        }
+
+        .logout-button:hover {
+            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e5d5ff;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .stat-card:hover {
+            border-color: #a855f7;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(168, 85, 247, 0.2);
+        }
+
+        .stat-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .stat-title {
+            color: #7c3aed;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            color: #4c1d95;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-change {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .stat-change.positive {
+            color: #dc2626;
+        }
+
+        .stat-change.negative {
+            color: #16a34a;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e5d5ff;
+        }
+
+        .chart-title {
+            color: #7c3aed;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .insights-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e5d5ff;
+            margin-bottom: 30px;
+        }
+
+        .insights-title {
+            color: #7c3aed;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .insight-item {
+            background: rgba(168, 85, 247, 0.1);
+            border-left: 4px solid #a855f7;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            color: #4c1d95;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .recent-expenses {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e5d5ff;
+        }
+
+        .recent-title {
+            color: #7c3aed;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #e5d5ff;
+            transition: all 0.3s ease;
+        }
+
+        .expense-item:hover {
+            background: rgba(168, 85, 247, 0.05);
+        }
+
+        .expense-item:last-child {
+            border-bottom: none;
+        }
+
+        .expense-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .expense-category {
+            font-size: 24px;
+        }
+
+        .expense-details h4 {
+            color: #4c1d95;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .expense-details p {
+            color: #a855f7;
+            font-size: 12px;
+        }
+
+        .expense-amount {
+            color: #7c3aed;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-button:hover {
+            background: linear-gradient(135deg, #9333ea 0%, #6d28d9 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(168, 85, 247, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .nav-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1 class="welcome-message">Welcome, {{ user.username }}!</h1>
+            <div class="nav-buttons">
+                <a href="{% url 'add_expense' %}" class="nav-button">➕ Add Expense</a>
+                <a href="{% url 'add_income' %}" class="nav-button">💰 Add Income</a>
+                <a href="{% url 'manage_budgets' %}" class="nav-button">🎯 Budgets</a>
+                <a href="{% url 'analytics' %}" class="nav-button">📊 Analytics</a>
+                <a href="{% url 'logout' %}" class="nav-button logout-button">Logout</a>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">💸</div>
+                <div class="stat-title">Total Spent This Month</div>
+                <div class="stat-value">₹{{ current_total|floatformat:2|default:"0.00" }}</div>
+                {% if month_change > 0 %}
+                    <div class="stat-change positive">+{{ month_change|floatformat:1 }}% vs last month</div>
+                {% elif month_change < 0 %}
+                    <div class="stat-change negative">{{ month_change|floatformat:1 }}% vs last month</div>
+                {% else %}
+                    <div class="stat-change">Same as last month</div>
+                {% endif %}
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-title">Total Income</div>
+                <div class="stat-value">₹{{ current_income|floatformat:2|default:"0.00" }}</div>
+                <div class="stat-change">{{ current_month }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">⚖️</div>
+                <div class="stat-title">Balance</div>
+                <div class="stat-value {% if balance < 0 %}positive{% else %}negative{% endif %}">
+                    ₹{{ balance|floatformat:2|default:"0.00" }}
+                </div>
+                {% if balance < 0 %}
+                    <div class="stat-change positive">Over budget</div>
+                {% else %}
+                    <div class="stat-change negative">Under budget</div>
+                {% endif %}
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-title">Expenses Count</div>
+                <div class="stat-value">{{ recent_expenses|length }}</div>
+                <div class="stat-change">This month</div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-grid">
+            <div class="chart-container">
+                <div class="chart-title">Category Breakdown</div>
+                <canvas id="categoryChart" width="400" height="300"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-title">Weekly Spending Trend</div>
+                <canvas id="trendChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+
+        <!-- Smart Insights -->
+        {% if insights %}
+        <div class="insights-section">
+            <div class="insights-title">
+                🧠 Smart Insights
+            </div>
+            {% for insight in insights %}
+                <div class="insight-item">{{ insight }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Recent Expenses -->
+        <div class="recent-expenses">
+            <div class="recent-title">Recent Expenses</div>
+            {% if recent_expenses %}
+                {% for expense in recent_expenses %}
+                    <div class="expense-item">
+                        <div class="expense-info">
+                            <div class="expense-category">{{ expense.category.icon }}</div>
+                            <div class="expense-details">
+                                <h4>{{ expense.title }}</h4>
+                                <p>{{ expense.category.name }} • {{ expense.date|date:"M d, Y" }}</p>
+                            </div>
+                        </div>
+                        <div class="expense-amount">{{ expense.formatted_amount }}</div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p style="text-align: center; color: #a855f7; padding: 20px;">No expenses recorded yet. <a href="{% url 'add_expense' %}" style="color: #7c3aed;">Add your first expense!</a></p>
+            {% endif %}
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="{% url 'add_expense' %}" class="action-button">
+                ➕ Add Expense
+            </a>
+            <a href="{% url 'expense_list' %}" class="action-button">
+                📋 View All Expenses
+            </a>
+            <a href="{% url 'analytics' %}" class="action-button">
+                📊 Detailed Analytics
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Category Pie Chart
+        const categoryData = {{ category_expenses|safe }};
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        
+        if (categoryData && categoryData.length > 0) {
+            new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: categoryData.map(item => item.category__name),
+                    datasets: [{
+                        data: categoryData.map(item => parseFloat(item.total)),
+                        backgroundColor: categoryData.map(item => item.category__color || '#a855f7'),
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ₹' + context.parsed.toFixed(2);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } else {
+            categoryCtx.fillStyle = '#a855f7';
+            categoryCtx.font = '16px Arial';
+            categoryCtx.textAlign = 'center';
+            categoryCtx.fillText('No data available', 200, 150);
+        }
+
+        // Weekly Trend Chart
+        const trendData = {{ weekly_data|safe }};
+        const trendCtx = document.getElementById('trendChart').getContext('2d');
+        
+        new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: trendData.map(item => item.week),
+                datasets: [{
+                    label: 'Weekly Spending',
+                    data: trendData.map(item => item.amount),
+                    borderColor: '#a855f7',
+                    backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#7c3aed',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Spent: ₹' + context.parsed.y.toFixed(2);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₹' + value.toFixed(0);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

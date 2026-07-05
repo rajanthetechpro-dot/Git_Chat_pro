@@ -1,0 +1,21 @@
+# GitHub RAG Application Requirements
+# Supports Python >=3.9, <4.0
+
+# Core dependencies
+gitingest
+streamlit
+python-dotenv
+pandas
+plotly
+
+# LlamaIndex core and integrations - using compatible versions
+llama-index
+llama-index-llms-ollama
+llama-index-llms-openai
+llama-index-llms-groq
+llama-index-llms-anthropic
+llama-index-embeddings-huggingface
+llama-index-embeddings-openai
+
+# Additional dependencies for local model support
+huggingface-hub
