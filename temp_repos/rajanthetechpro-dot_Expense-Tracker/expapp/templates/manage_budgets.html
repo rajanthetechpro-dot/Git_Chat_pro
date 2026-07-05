@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Budgets - Expense Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8d5ff 0%, #d1b3ff 50%, #c9a6ff 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(147, 51, 234, 0.15);
+            padding: 40px;
+            border: 1px solid rgba(147, 51, 234, 0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom:  пропущено
+        }
+
+        .page-title {
+            color: #7c3aed;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .back-button {
+            background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, #9333ea 0%, #6d28d9 100%);
+            transform: translateY(-2px);
+        }
+
+        .budget-form {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e5d5ff;
+            margin-bottom: 30px;
+        }
+
+        .form-title {
+            color: #7c3aed;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 20px;
+            align-items: end;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-label {
+            display: block;
+            color: #7c3aed;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5d5ff;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            color: #4c1d95;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+        }
+
+        .form-button {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .form-button:hover {
+            background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+            transform: translateY(-2px);
+        }
+
+        .budgets-section {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e5d5ff;
+        }
+
+        .section-title {
+            color: #7c3aed;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .budget-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .budget-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e5d5ff;
+            transition: all 0.3s ease;
+        }
+
+        .budget-card:hover {
+            border-color: #a855f7;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(168, 85, 247, 0.2);
+        }
+
+        .budget-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .budget-icon {
+            font-size: 32px;
+        }
+
+        .budget-info h3 {
+            color: #4c1d95;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .budget-info p {
+            color: #a855f7;
+            font-size: 14px;
+        }
+
+        .budget-stats {
+            margin-bottom: 15px;
+        }
+
+        .budget-amount {
+            color: #7c3aed;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5d5ff;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #a855f7, #7c3aed);
+            transition: width 0.3s ease;
+        }
+
+        .progress-fill.warning {
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+        }
+
+        .progress-fill.danger {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #a855f7;
+            font-weight: 600;
+        }
+
+        .budget-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .edit-button {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .edit-button:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        }
+
+        .delete-button {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .delete-button:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        }
+
+        .no-budgets {
+            text-align: center;
+            padding: 60px 20px;
+            color: #a855f7;
+        }
+
+        .no-budgets-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .no-budgets-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #7c3aed;
+        }
+
+        .no-budgets-text {
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #dc2626;
+            font-size: 14px;
+        }
+
+        .success-message {
+            background: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #16a34a;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .budget-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="page-title">Manage Budgets</h1>
+            <a href="{% url 'dashboard' %}" class="back-button">← Back to Dashboard</a>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'error' %}
+                    <div class="error-message">{{ message }}</div>
+                {% else %}
+                    <div class="success-message">{{ message }}</div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <!-- Add/Edit Budget Form -->
+        <div class="budget-form">
+            <div class="form-title">🎯 Set Monthly Budget</div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select name="category" class="form-select" required>
+                            <option value="">Select Category</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">
+                                    {{ category.icon }} {{ category.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Budget Amount (₹)</label>
+                        <input type="number" name="amount" class="form-input" placeholder="0.00" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Month</label>
+                        <input type="month" name="month" class="form-input" value="{{ current_month|date:'Y-m' }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="form-button">Set Budget</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Current Budgets -->
+        <div class="budgets-section">
+            <div class="section-title">📊 Current Budgets - {{ current_month|date:"F Y" }}</div>
+
+            {% if budgets %}
+                <div class="budget-grid">
+                    {% for budget in budgets %}
+                        <div class="budget-card">
+                            <div class="budget-header">
+                                <div class="budget-icon">{{ budget.category.icon }}</div>
+                                <div class="budget-info">
+                                    <h3>{{ budget.category.name }}</h3>
+                                    <p>{{ budget.month|date:"F Y" }}</p>
+                                </div>
+                            </div>
+
+                            <div class="budget-stats">
+                                <div class="budget-amount">{{ budget.formatted_amount }}</div>
+                                
+                                <div class="progress-bar">
+                                    {% with percentage=budget.percentage_spent %}
+                                        <div class="progress-fill {% if percentage >= 90 %}danger{% elif percentage >= 75 %}warning{% endif %}" 
+                                             style="width: {% if percentage > 100 %}100{% else %}{{ percentage }}{% endif %}%"></div>
+                                    {% endwith %}
+                                </div>
+
+                                <div class="progress-text">
+                                    <span>Spent: ₹{{ budget.spent_amount|floatformat:2 }}</span>
+                                    <span>{{ budget.percentage_spent|floatformat:1 }}%</span>
+                                </div>
+
+                                {% with remaining=budget.remaining_amount %}
+                                    <div style="color: {% if remaining < 0 %}#dc2626{% else %}#16a34a{% endif %}; font-size: 14px; font-weight: 600; margin-top: 10px;">
+                                        {% if remaining < 0 %}
+                                            Over budget by ₹{{ budget.abs_remaining|floatformat:2 }}
+                                        {% else %}
+                                            Remaining: ₹{{ remaining|floatformat:2 }}
+                                        {% endif %}
+                                    </div>
+                                {% endwith %}
+                            </div>
+
+                            <div class="budget-actions">
+                                <button class="edit-button" onclick="editBudget({{ budget.id }}, '{{ budget.category.name }}', {{ budget.amount }}, '{{ budget.month|date:"Y-m" }}')">
+                                    ✏️ Edit
+                                </button>
+                                <button class="delete-button" onclick="deleteBudget({{ budget.id }})">
+                                    🗑️ Delete
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-budgets">
+                    <div class="no-budgets-icon">🎯</div>
+                    <div class="no-budgets-title">No Budgets Set</div>
+                    <div class="no-budgets-text">
+                        Set monthly budgets for your expense categories to track your spending and stay on target.
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function editBudget(id, categoryName, amount, month) {
+            // Populate the form with existing budget data
+            document.querySelector('select[name="category"]').value = id;
+            document.querySelector('input[name="amount"]').value = amount;
+            document.querySelector('input[name="month"]').value = month;
+            
+            // Scroll to form
+            document.querySelector('.budget-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteBudget(id) {
+            if (confirm('Are you sure you want to delete this budget?')) {
+                // You can implement delete functionality here
+                alert('Delete functionality would be implemented here');
+            }
+        }
+
+        // Auto-focus on category selection when form loads
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('select[name="category"]').focus();
+        });
+    </script>
+</body>
+</html>
