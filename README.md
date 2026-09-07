@@ -1,33 +1,55 @@
+# GitHub RAG
 
-# 100% local RAG app to chat with GitHub!
+<p align="center">
+  <strong>AI-Powered Retrieval-Augmented Generation Application</strong>
+</p>
 
-This project leverages GitIngest to parse a GitHub repo in markdown format and the use LlamaIndex for RAG orchestration over it.
-
-
-## Installation and setup
-
-**Install Dependencies**:
-   Ensure you have Python 3.9 or later installed (tested with Python 3.11.9).
-   
-   **Option 1: Using requirements.txt (Recommended)**
-   ```bash
-   pip install -r requirements.txt
-   ```
-   
-   **Option 2: Manual installation**
-   ```bash
-   pip install gitingest llama-index llama-index-llms-ollama llama-index-llms-openai llama-index-agent-openai llama-index-embeddings-huggingface streamlit pandas python-dotenv huggingface-hub
-   ```
-
-**Environment Setup**:
-   For OpenAI integration, create a `.env` file in the project directory:
-   ```
-   OPENAI_API_KEY=your_openai_api_key_here
-   ```
-
-**Running**:
-
-Make sure you have Ollama Server running then you can run following command to start the streamlit application ```streamlit run app_local.py```.
+<p align="center">
+  Retrieve relevant information from documents and generate accurate, context-aware AI responses.
+</p>
 
 ---
 
+## Overview
+
+GitHub RAG is a Retrieval-Augmented Generation (RAG) application that combines document retrieval with Large Language Models to provide accurate and context-aware responses.
+
+Instead of relying solely on the knowledge stored within the language model, the application retrieves relevant information from external documents using semantic search and provides that information as context to the AI model.
+
+This approach helps improve response accuracy and reduce hallucinations.
+
+## Features
+
+- **🔍 Semantic Search** — Retrieves the most relevant document chunks using vector embeddings.
+- **🤖 AI-Powered Responses** — Generates responses based on retrieved contextual information.
+- **📚 Document-Based Q&A** — Allows users to ask questions based on uploaded documents.
+- **🎯 Context-Aware Answers** — Grounds responses in external knowledge instead of relying solely on the language model.
+- **⚡ Fast Retrieval** — Uses vector search to efficiently find relevant information.
+- **💬 Interactive Interface** — Provides an easy-to-use interface for interacting with the RAG system.
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Language | Python |
+| Framework | Streamlit |
+| AI / LLM | OpenAI / Ollama |
+| RAG Framework | LangChain, LlamaIndex |
+| Search | Vector Search |
+| Embeddings | Vector Embeddings |
+| Environment | Python-dotenv |
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.9 or later
+- OpenAI API key (if using OpenAI)
+- Ollama (if using local LLMs)
+
+### Installation
+
+#### Option 1: Using `requirements.txt` (Recommended)
+
+```bash
+pip install -r requirements.txt
