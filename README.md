@@ -53,3 +53,8 @@ This approach helps improve response accuracy and reduce hallucinations.
 
 ```bash
 pip install -r requirements.txt
+
+### Option 2:
+pip install streamlit langchain llama-index \
+llama-index-llms-ollama llama-index-llms-openai \
+llama-index-agent-openai python-dotenv
